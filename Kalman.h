@@ -2,6 +2,17 @@
    Based on: http://interactive-matter.eu/blog/2009/12/18/filtering-sensor-data-with-a-kalman-filter/
 */
 
+/*
+q = process noise covariance   
+r = measurement noise covariance
+x = value of interest
+p = estimation error covariance
+k = Kalman gain
+---------------
+H = 1 =>  we will assume H, O/ are constant ( for linear filters they are )
+
+*/
+
 #ifndef _Kalman_h
 #define _Kalman_h
 
@@ -47,10 +58,14 @@ class Kalman {
       this->p = this->p + this->q;
     
       //measurement update
+       // K = Kalman Gain |  P = Schätzfehler |  p+r = Gesamtfehler | r = Fehler der Messung 
+       // 1 - K => Gegenstück von Kalman Gain = r/(p+r)
       this->k = this->p / (this->p + this->r); // K = (P* H) /( H * P * H + R)   Update Kalman Gain  
-      this->x = this->x + this->k * (measurement - this->x); // U` + = K* (U-H * U') update estimate x= U dach H = 1 U = measurement 
+      // K = Schätzfehler(p) / ( Schätzfehler(p) + Fehler der Messung (r)
+       this->x = this->x + this->k * (measurement - this->x); // U` + = K* (U-H * U') update estimate x= U dach H = 1 U = measurement 
+       // Schätz(t) = Schätz(t-1) + K*(Mess(t)- Schätz(t-1))
       this->p = (1 - this->k) * this->p; // P = (1- K * H ) * P + Q ich gehe davon aus H = =1 und q = 0 Update error estimate 
-      
+      // aktuale schätze Fehler => F Schätz (p) = (1-K)* F schätz(t-1) ( alter Schätzfehler)
       return this->x; 
     }
     
