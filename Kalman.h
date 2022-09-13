@@ -47,11 +47,11 @@ class Kalman {
       this->p = this->p + this->q;
     
       //measurement update
-      this->k = this->p / (this->p + this->r);
-      this->x = this->x + this->k * (measurement - this->x);
-      this->p = (1 - this->k) * this->p;
+      this->k = this->p / (this->p + this->r); // K = (P* H) /( H * P * H + R)   Update Kalman Gain  
+      this->x = this->x + this->k * (measurement - this->x); // U` + = K* (U-H * U') update estimate x= U dach H = 1 U = measurement 
+      this->p = (1 - this->k) * this->p; // P = (1- K * H ) * P + Q ich gehe davon aus H = =1 und q = 0 Update error estimate 
       
-      return this->x;
+      return this->x; 
     }
     
     void setParameters(double process_noise, double sensor_noise, double estimated_error) {
